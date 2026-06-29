@@ -1,0 +1,460 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:#0f1117;color:#e8eaf0;min-height:100vh}
+:root{--dark:#0f1117;--card:#1a1d27;--card2:#22263a;--border:#2e3347;--accent:#3b7fff;--accent2:#1a4fd6;--text:#e8eaf0;--muted:#8892aa;--green:#22c55e;--red:#ef4444;--line:#00c300}
+.nav{background:#13172080;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.logo{font-size:20px;font-weight:500;color:#fff;letter-spacing:-.5px}
+.logo span{color:var(--accent)}
+.cart-btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:6px;font-weight:500}
+.cart-count{background:#fff;color:var(--accent);border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.main{max-width:860px;margin:0 auto;padding:24px 16px}
+.page{display:none}
+.page.active{display:block}
+.hero{text-align:center;padding:32px 0 24px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.hero h1{font-size:28px;font-weight:500;color:#fff;margin-bottom:8px}
+.hero p{color:var(--muted);font-size:15px}
+.section-title{font-size:13px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;font-weight:500}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s}
+.product-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.product-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:52px;background:var(--card2)}
+.product-info{padding:14px}
+.product-name{font-size:14px;font-weight:500;color:#fff;margin-bottom:4px}
+.product-desc{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-size:16px;font-weight:500;color:var(--accent)}
+.add-btn{background:var(--accent);border:none;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .2s}
+.add-btn:hover{background:var(--accent2)}
+.badge{font-size:10px;background:#ef444420;color:var(--red);padding:2px 6px;border-radius:4px;margin-bottom:6px;display:inline-block}
+.badge.new{background:#22c55e20;color:var(--green)}
+/* Cart */
+.cart-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
+.cart-emoji{font-size:32px;width:52px;height:52px;background:var(--card2);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.cart-details{flex:1}
+.cart-name{font-size:14px;font-weight:500;color:#fff}
+.cart-qty{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty-btn{background:var(--card2);border:1px solid var(--border);color:#fff;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.qty-num{font-size:14px;min-width:20px;text-align:center}
+.cart-price{font-size:15px;font-weight:500;color:var(--accent)}
+.remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px}
+.remove-btn:hover{color:var(--red)}
+.order-summary{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0}
+.summary-row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:10px}
+.summary-total{display:flex;justify-content:space-between;font-size:17px;font-weight:500;color:#fff;padding-top:12px;border-top:1px solid var(--border);margin-top:4px}
+.checkout-btn{width:100%;background:var(--accent);border:none;color:#fff;padding:14px;border-radius:10px;font-size:16px;cursor:pointer;font-weight:500;margin-top:4px;transition:background .2s}
+.checkout-btn:hover{background:var(--accent2)}
+/* Shipping */
+.step-tabs{display:flex;gap:0;margin-bottom:28px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.step-tab{flex:1;padding:12px;text-align:center;font-size:13px;color:var(--muted);background:var(--card);cursor:pointer;border-right:1px solid var(--border)}
+.step-tab:last-child{border-right:none}
+.step-tab.active{background:var(--accent);color:#fff}
+.step-tab.done{background:#22c55e20;color:var(--green)}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+.form-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:#55607a}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.shipping-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.ship-option{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s}
+.ship-option.selected{border-color:var(--accent);background:#3b7fff10}
+.ship-option input[type=radio]{display:none}
+.ship-icon{font-size:24px}
+.ship-info{flex:1}
+.ship-name{font-size:14px;font-weight:500;color:#fff}
+.ship-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.ship-price{font-size:14px;font-weight:500;color:var(--accent)}
+.cvs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.cvs-btn{background:var(--card2);border:2px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center;cursor:pointer;transition:border-color .2s}
+.cvs-btn:hover,.cvs-btn.selected{border-color:var(--accent)}
+.cvs-logo{font-size:28px;margin-bottom:4px}
+.cvs-name{font-size:12px;color:var(--muted)}
+/* Payment */
+.pay-options{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.pay-option{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.pay-option.selected{border-color:var(--accent)}
+.pay-header{padding:16px 18px;display:flex;align-items:center;gap:14px}
+.pay-icon{font-size:26px}
+.pay-name{font-size:15px;font-weight:500;color:#fff}
+.pay-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.pay-body{padding:16px 18px;border-top:1px solid var(--border);background:var(--card2)}
+.bank-info{display:flex;flex-direction:column;gap:10px}
+.bank-row{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.bank-label{color:var(--muted)}
+.bank-val{color:#fff;font-weight:500;font-family:monospace}
+.copy-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+.copy-btn:hover{color:#fff}
+.line-pay-box{text-align:center;padding:8px 0}
+.line-pay-logo{background:#00c300;color:#fff;font-size:22px;font-weight:700;padding:10px 24px;border-radius:10px;display:inline-block;margin-bottom:14px;letter-spacing:1px}
+.line-pay-btn{background:#00c300;border:none;color:#fff;padding:14px 40px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:filter .2s;width:100%}
+.line-pay-btn:hover{filter:brightness(1.1)}
+.qr-box{background:#fff;border-radius:10px;padding:16px;display:inline-block;margin:12px 0}
+.qr-inner{width:100px;height:100px;background:repeating-conic-gradient(#000 0%,#000 25%,#fff 0%,#fff 50%) 0/10px 10px;border-radius:4px}
+.continue-btn{width:100%;background:var(--accent);border:none;color:#fff;padding:14px;border-radius:10px;font-size:15px;cursor:pointer;font-weight:500;margin-top:8px;transition:background .2s}
+.continue-btn:hover{background:var(--accent2)}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;margin-right:10px}
+.back-btn:hover{color:#fff;border-color:#fff}
+.btn-row{display:flex;align-items:center;margin-top:16px}
+/* Success */
+.success-box{text-align:center;padding:48px 16px}
+.success-icon{font-size:72px;margin-bottom:20px}
+.success-title{font-size:24px;font-weight:500;color:#fff;margin-bottom:10px}
+.success-sub{color:var(--muted);font-size:15px;line-height:1.6}
+.order-num{color:var(--accent);font-weight:500;font-size:18px;margin:16px 0}
+.home-btn{background:var(--accent);border:none;color:#fff;padding:12px 32px;border-radius:10px;font-size:15px;cursor:pointer;font-weight:500;margin-top:16px}
+.empty{text-align:center;padding:48px 16px;color:var(--muted)}
+.empty-icon{font-size:56px;margin-bottom:16px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 22px;border-radius:10px;font-size:14px;font-weight:500;display:none;z-index:999}
+</style>
+
+<h2 class="sr-only">線上賣場示範 — 包含商品列表、購物車、超商取貨及付款頁面</h2>
+
+<nav class="nav">
+  <div class="logo">Tech<span>Shop</span></div>
+  <button class="cart-btn" onclick="goTo('cart')">
+    🛒 購物車
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<div class="main">
+
+<!-- 商品列表 -->
+<div class="page active" id="page-shop">
+  <div class="hero">
+    <h1>精選 3C 生活用品</h1>
+    <p>品質保證 · 快速出貨 · 全台超商取貨</p>
+  </div>
+  <div class="section-title">熱門商品</div>
+  <div class="product-grid" id="product-grid"></div>
+</div>
+
+<!-- 購物車 -->
+<div class="page" id="page-cart">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+    <button class="back-btn" onclick="goTo('shop')">← 繼續購物</button>
+    <span style="font-size:18px;font-weight:500;color:#fff">購物車</span>
+  </div>
+  <div id="cart-list"></div>
+  <div id="cart-summary"></div>
+</div>
+
+<!-- 收件資料 -->
+<div class="page" id="page-shipping">
+  <div class="step-tabs">
+    <div class="step-tab done">① 購物車</div>
+    <div class="step-tab active">② 收件資料</div>
+    <div class="step-tab">③ 付款</div>
+  </div>
+  <div class="section-title">選擇配送方式</div>
+  <div class="shipping-options">
+    <div class="ship-option selected" onclick="selectShip(this,'home')" id="ship-home">
+      <span class="ship-icon">🏠</span>
+      <div class="ship-info">
+        <div class="ship-name">宅配到府</div>
+        <div class="ship-desc">3-5 工作天・黑貓/新竹物流</div>
+      </div>
+      <span class="ship-price">NT$80</span>
+    </div>
+    <div class="ship-option" onclick="selectShip(this,'cvs')" id="ship-cvs">
+      <span class="ship-icon">🏪</span>
+      <div class="ship-info">
+        <div class="ship-name">超商取貨</div>
+        <div class="ship-desc">1-3 工作天・全台超商門市</div>
+      </div>
+      <span class="ship-price">NT$60</span>
+    </div>
+  </div>
+
+  <div id="home-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">收件人姓名</label>
+        <input class="form-input" placeholder="王小明">
+      </div>
+      <div class="form-group">
+        <label class="form-label">連絡電話</label>
+        <input class="form-input" placeholder="0912-345-678">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">收件地址</label>
+      <input class="form-input" placeholder="台中市西區民生路 100 號 5F">
+    </div>
+  </div>
+
+  <div id="cvs-form" style="display:none">
+    <div class="section-title" style="margin-bottom:10px">選擇超商品牌</div>
+    <div class="cvs-grid">
+      <div class="cvs-btn selected" onclick="selectCvs(this)">
+        <div class="cvs-logo">🟠</div>
+        <div class="cvs-name">7-ELEVEN</div>
+      </div>
+      <div class="cvs-btn" onclick="selectCvs(this)">
+        <div class="cvs-logo">🟢</div>
+        <div class="cvs-name">全家</div>
+      </div>
+      <div class="cvs-btn" onclick="selectCvs(this)">
+        <div class="cvs-logo">🔵</div>
+        <div class="cvs-name">萊爾富</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label">搜尋門市</label>
+      <input class="form-input" placeholder="輸入門市名稱或地址">
+    </div>
+    <div style="background:var(--card2);border-radius:8px;border:1px solid var(--border);padding:12px;margin-top:4px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">附近門市</div>
+      <div onclick="selectStore(this)" style="padding:10px;border-radius:6px;cursor:pointer;border-bottom:1px solid var(--border);font-size:14px;color:#fff" class="store-opt selected-store">🟠 7-ELEVEN 台中民生門市・台中市西區民生路 88 號</div>
+      <div onclick="selectStore(this)" style="padding:10px;border-radius:6px;cursor:pointer;border-bottom:1px solid var(--border);font-size:14px;color:var(--muted)">🟠 7-ELEVEN 台中英才門市・台中市西區英才路 150 號</div>
+      <div onclick="selectStore(this)" style="padding:10px;border-radius:6px;cursor:pointer;font-size:14px;color:var(--muted)">🟠 7-ELEVEN 台中文心門市・台中市北區文心路 302 號</div>
+    </div>
+    <div class="form-row" style="margin-top:16px">
+      <div class="form-group">
+        <label class="form-label">取件人姓名</label>
+        <input class="form-input" placeholder="王小明">
+      </div>
+      <div class="form-group">
+        <label class="form-label">取件人電話</label>
+        <input class="form-input" placeholder="0912-345-678">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="back-btn" onclick="goTo('cart')">← 返回</button>
+    <button class="continue-btn" style="margin-top:0" onclick="goTo('payment')">前往付款 →</button>
+  </div>
+</div>
+
+<!-- 付款 -->
+<div class="page" id="page-payment">
+  <div class="step-tabs">
+    <div class="step-tab done">① 購物車</div>
+    <div class="step-tab done">② 收件資料</div>
+    <div class="step-tab active">③ 付款</div>
+  </div>
+  <div class="section-title">選擇付款方式</div>
+  <div class="pay-options">
+    <div class="pay-option selected" onclick="selectPay(this,'transfer')">
+      <div class="pay-header">
+        <span class="pay-icon">🏦</span>
+        <div>
+          <div class="pay-name">ATM 轉帳</div>
+          <div class="pay-sub">各大銀行網銀/ATM 均可轉帳</div>
+        </div>
+      </div>
+      <div class="pay-body" id="pay-transfer-body">
+        <div class="bank-info">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:10px">請於 24 小時內完成轉帳，轉帳後系統自動確認</div>
+          <div class="bank-row">
+            <span class="bank-label">銀行代碼</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="bank-val">013（國泰世華）</span>
+              <button class="copy-btn" onclick="copyText('013')">複製</button>
+            </div>
+          </div>
+          <div class="bank-row">
+            <span class="bank-label">帳號</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="bank-val">0843-0099-1234-5678</span>
+              <button class="copy-btn" onclick="copyText('08430099123456789')">複製</button>
+            </div>
+          </div>
+          <div class="bank-row">
+            <span class="bank-label">轉帳金額</span>
+            <span id="transfer-amt" style="color:var(--accent);font-weight:700;font-size:16px;font-family:monospace">NT$0</span>
+          </div>
+          <div class="bank-row" style="margin-top:8px">
+            <span class="bank-label">戶名</span>
+            <span class="bank-val">技優科技有限公司</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-option" onclick="selectPay(this,'linepay')">
+      <div class="pay-header">
+        <span class="pay-icon" style="background:#00c300;border-radius:8px;padding:4px;font-size:20px">💬</span>
+        <div>
+          <div class="pay-name">LINE Pay</div>
+          <div class="pay-sub">使用 LINE App 掃碼付款</div>
+        </div>
+      </div>
+      <div class="pay-body" id="pay-linepay-body" style="display:none">
+        <div class="line-pay-box">
+          <div class="line-pay-logo">LINE Pay</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px">請使用 LINE App 掃描以下 QR Code 完成付款</div>
+          <div class="qr-box">
+            <div class="qr-inner"></div>
+          </div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">或點選以下按鈕跳轉至 LINE Pay</div>
+          <button class="line-pay-btn" style="margin-top:12px">前往 LINE Pay 付款</button>
+          <div style="font-size:12px;color:var(--muted);margin-top:12px">付款金額：<span id="line-amt" style="color:var(--line);font-weight:700">NT$0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="back-btn" onclick="goTo('shipping')">← 返回</button>
+    <button class="continue-btn" style="margin-top:0" onclick="goTo('success')">確認下單 ✓</button>
+  </div>
+</div>
+
+<!-- 完成 -->
+<div class="page" id="page-success">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <div class="success-title">訂單成立！</div>
+    <div class="order-num" id="order-num">訂單編號：#TS-000000</div>
+    <div class="success-sub">感謝您的訂購！<br>我們將於確認付款後的 1-3 個工作天出貨<br>訂單狀態將以 SMS 簡訊通知您</div>
+    <button class="home-btn" onclick="goTo('shop')">繼續購物</button>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const products=[
+  {id:1,emoji:'⌨️',name:'機械鍵盤 Pro',desc:'Cherry MX 紅軸・RGB 背光・全尺寸',price:1890,badge:'熱銷',badgeType:''},
+  {id:2,emoji:'🖱️',name:'無線靜音滑鼠',desc:'2.4G 無線・長續航・人體工學',price:680,badge:'新品',badgeType:'new'},
+  {id:3,emoji:'🎧',name:'降噪耳機',desc:'主動降噪 ANC・40小時續航',price:2490,badge:'熱銷',badgeType:''},
+  {id:4,emoji:'💡',name:'LED 護眼檯燈',desc:'無頻閃・USB 充電・10段亮度',price:890,badge:'',badgeType:''},
+  {id:5,emoji:'🔋',name:'磁吸行動電源',desc:'10000mAh・MagSafe 相容・PD 快充',price:1290,badge:'新品',badgeType:'new'},
+  {id:6,emoji:'📱',name:'手機支架 360°',desc:'桌面/車載兩用・鋁合金材質',price:390,badge:'',badgeType:''}
+];
+
+let cart={};
+
+function renderProducts(){
+  const grid=document.getElementById('product-grid');
+  grid.innerHTML=products.map(p=>`
+    <div class="product-card">
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        ${p.badge?`<div class="badge ${p.badgeType}">${p.badge}</div>`:''}
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <span class="product-price">NT$${p.price.toLocaleString()}</span>
+          <button class="add-btn" onclick="addToCart(${p.id})">加入購物車</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addToCart(id){
+  cart[id]=(cart[id]||0)+1;
+  updateCartCount();
+  showToast('已加入購物車 🛒');
+}
+
+function updateCartCount(){
+  const total=Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cart-count').textContent=total;
+}
+
+function renderCart(){
+  const list=document.getElementById('cart-list');
+  const summary=document.getElementById('cart-summary');
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  if(!keys.length){
+    list.innerHTML=`<div class="empty"><div class="empty-icon">🛒</div><div>購物車是空的</div></div>`;
+    summary.innerHTML='';
+    return;
+  }
+  list.innerHTML=keys.map(id=>{
+    const p=products.find(x=>x.id==id);
+    return `<div class="cart-item">
+      <div class="cart-emoji">${p.emoji}</div>
+      <div class="cart-details">
+        <div class="cart-name">${p.name}</div>
+        <div class="cart-qty">
+          <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>
+          <span class="qty-num">${cart[id]}</span>
+          <button class="qty-btn" onclick="changeQty(${id},1)">+</button>
+        </div>
+      </div>
+      <div class="cart-price">NT$${(p.price*cart[id]).toLocaleString()}</div>
+      <button class="remove-btn" onclick="removeItem(${id})">✕</button>
+    </div>`;
+  }).join('');
+  const subtotal=keys.reduce((s,id)=>s+products.find(x=>x.id==id).price*cart[id],0);
+  summary.innerHTML=`<div class="order-summary">
+    <div class="summary-row"><span>商品金額</span><span>NT$${subtotal.toLocaleString()}</span></div>
+    <div class="summary-row"><span>運費</span><span>依配送方式</span></div>
+    <div class="summary-total"><span>預估合計</span><span>NT$${subtotal.toLocaleString()}+</span></div>
+  </div>
+  <button class="checkout-btn" onclick="goTo('shipping')">前往結帳 →</button>`;
+}
+
+function changeQty(id,d){
+  cart[id]=Math.max(0,cart[id]+d);
+  if(!cart[id])delete cart[id];
+  updateCartCount();
+  renderCart();
+}
+function removeItem(id){delete cart[id];updateCartCount();renderCart();}
+
+let shipMode='home';
+function selectShip(el,mode){
+  document.querySelectorAll('.ship-option').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  shipMode=mode;
+  document.getElementById('home-form').style.display=mode==='home'?'block':'none';
+  document.getElementById('cvs-form').style.display=mode==='cvs'?'block':'none';
+}
+function selectCvs(el){
+  document.querySelectorAll('.cvs-btn').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectStore(el){
+  document.querySelectorAll('.store-opt').forEach(x=>{x.style.color='var(--muted)';x.classList.remove('selected-store')});
+  el.style.color='#fff';el.classList.add('selected-store');
+}
+
+let payMode='transfer';
+function selectPay(el,mode){
+  document.querySelectorAll('.pay-option').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  payMode=mode;
+  document.getElementById('pay-transfer-body').style.display=mode==='transfer'?'block':'none';
+  document.getElementById('pay-linepay-body').style.display=mode==='linepay'?'block':'none';
+}
+
+function updatePayAmounts(){
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  const subtotal=keys.reduce((s,id)=>s+products.find(x=>x.id==id).price*cart[id],0);
+  const ship=shipMode==='cvs'?60:80;
+  const total=subtotal+ship;
+  const t=`NT$${total.toLocaleString()}`;
+  document.getElementById('transfer-amt').textContent=t;
+  document.getElementById('line-amt').textContent=t;
+}
+
+function copyText(t){showToast('已複製 '+t);}
+
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(()=>el.style.display='none',2000);
+}
+
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  window.scrollTo(0,0);
+  if(page==='cart')renderCart();
+  if(page==='payment')updatePayAmounts();
+  if(page==='success'){
+    const n='#TS-'+Math.floor(100000+Math.random()*900000);
+    document.getElementById('order-num').textContent='訂單編號：'+n;
+    cart={};updateCartCount();
+  }
+}
+
+renderProducts();
+</script>
